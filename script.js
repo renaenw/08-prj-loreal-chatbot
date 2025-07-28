@@ -11,11 +11,11 @@
 const WORKER_URL = "https://young-snow-985a.renaenweiss.workers.dev/"; // <-- your Worker URL
 
 /* DOM elements */
-const chatForm    = document.getElementById("chatForm");
-const userInput   = document.getElementById("userInput");
-const chatWindow  = document.getElementById("chatWindow");
-const sendBtn     = document.getElementById("sendBtn");
-const darkToggle  = document.getElementById("darkModeToggle");
+const chatForm = document.getElementById("chatForm");
+const userInput = document.getElementById("userInput");
+const chatWindow = document.getElementById("chatWindow");
+const sendBtn = document.getElementById("sendBtn");
+const darkToggle = document.getElementById("darkModeToggle");
 
 /* Guard to avoid double-sends */
 let isSending = false;
@@ -23,7 +23,7 @@ let isSending = false;
 /* ---- 0) Lightweight “memory” for this session ---- */
 let userContext = {
   name: null,
-  pastQuestions: []
+  pastQuestions: [],
 };
 
 /* ---- 1) Base system prompt to keep the bot on-brand ---- */
@@ -37,12 +37,13 @@ const BASE_SYSTEM_PROMPT = `You are L’Oréal’s virtual product advisor.
  * The running transcript (excluding the dynamic context line).
  * We seed it with the single system prompt.
  */
-let messages = [
-  { role: "system", content: BASE_SYSTEM_PROMPT }
-];
+let messages = [{ role: "system", content: BASE_SYSTEM_PROMPT }];
 
 /* ---- 2) Greeting (visual only, not sent to the model) ---- */
-appendMessage("ai", "👋 Hi! I’m your L’Oréal product advisor. Ask me about routines, ingredients, or which product fits your needs.");
+appendMessage(
+  "ai",
+  "👋 Hi! I’m your L’Oréal product advisor. Ask me about routines, ingredients, or which product fits your needs."
+);
 
 /* ---- 2.1) Init theme ---- */
 initTheme();
@@ -86,7 +87,10 @@ chatForm.addEventListener("submit", async (e) => {
   } catch (err) {
     console.error("Worker/OpenAI error:", err);
     hideTypingBubble();
-    appendMessage("ai", "⚠️ Sorry, I’m having trouble answering right now. Please try again.");
+    appendMessage(
+      "ai",
+      "⚠️ Sorry, I’m having trouble answering right now. Please try again."
+    );
   } finally {
     // Re-enable UI
     userInput.disabled = false;
@@ -129,7 +133,10 @@ function appendMessage(role, text) {
   // Add timestamp attribute safely
   try {
     const now = new Date();
-    const time = now.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+    const time = now.toLocaleTimeString([], {
+      hour: "numeric",
+      minute: "2-digit",
+    });
     el.setAttribute("data-time", time);
   } catch (e) {
     console.warn("Timestamp formatting failed:", e);
@@ -138,7 +145,6 @@ function appendMessage(role, text) {
   chatWindow.appendChild(el);
   chatWindow.scrollTop = chatWindow.scrollHeight;
 }
-
 
 function showTypingBubble() {
   if (document.getElementById("typingBubble")) return;
@@ -169,7 +175,9 @@ function buildMessagesWithContext() {
     contextParts.push(`User's name: ${userContext.name}.`);
   }
   if (userContext.pastQuestions.length) {
-    contextParts.push(`User previously asked about: ${userContext.pastQuestions.join("; ")}.`);
+    contextParts.push(
+      `User previously asked about: ${userContext.pastQuestions.join("; ")}.`
+    );
   }
 
   const contextBlock = contextParts.length
@@ -180,11 +188,7 @@ function buildMessagesWithContext() {
   const baseSystem = messages[0];
   const convo = messages.slice(1);
 
-  return [
-    baseSystem,
-    { role: "system", content: contextBlock },
-    ...convo
-  ];
+  return [baseSystem, { role: "system", content: contextBlock }, ...convo];
 }
 
 /**
@@ -199,7 +203,7 @@ function detectAndStoreName(message) {
     /my name is\s+([A-Za-zÀ-ÖØ-öø-ÿ' -]{2,})/i,
     /\bi am\s+([A-Za-zÀ-ÖØ-öø-ÿ' -]{2,})/i,
     /\bi'm\s+([A-Za-zÀ-ÖØ-öø-ÿ' -]{2,})/i,
-    /\bim\s+([A-Za-zÀ-ÖØ-öø-ÿ' -]{2,})/i
+    /\bim\s+([A-Za-zÀ-ÖØ-öø-ÿ' -]{2,})/i,
   ];
 
   for (const re of patterns) {
@@ -232,7 +236,7 @@ async function getOpenAIReply(messagesWithContext) {
   const res = await fetch(WORKER_URL, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ messages: messagesWithContext })
+    body: JSON.stringify({ messages: messagesWithContext }),
   });
 
   const data = await res.json();

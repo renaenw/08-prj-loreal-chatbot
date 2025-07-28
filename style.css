@@ -349,3 +349,92 @@ body.dark-mode .site-footer a:hover {
 body.dark-mode .site-footer {
   color: #aaa;
 }
+
+/* ================================
+   Avatars (CSS-only, no images)
+   ================================ */
+.msg {
+  position: relative;
+  padding-bottom: 18px; /* room for timestamp */
+}
+
+/* AI bubble gets left avatar */
+.msg.ai {
+  padding-left: 48px; /* space for avatar circle */
+}
+.msg.ai::before {
+  content: "L"; /* L'Oréal */
+  position: absolute;
+  left: -4px;
+  top: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--loreal-gold);
+  color: var(--loreal-black);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+/* User bubble gets right avatar */
+.msg.user {
+  padding-right: 48px; /* space for avatar circle */
+}
+.msg.user::before {
+  content: "U";
+  position: absolute;
+  right: -4px;
+  top: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--loreal-gold);
+  color: var(--loreal-white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+/* Dark mode tweaks */
+body.dark-mode .msg.user::before {
+  background: var(--loreal-black);
+  color: var(--loreal-gold);
+}
+body.dark-mode .msg.ai::before {
+  background: var(--loreal-gold);
+  color: var(--loreal-black);
+}
+
+/* ================================
+   Timestamps (CSS-only)
+   Uses the element's data-time attribute.
+   Example: <div class="msg ai" data-time="10:42 PM">...</div>
+   ================================ */
+.msg[data-time]::after {
+  content: attr(data-time);
+  display: block;
+  margin-top: 4px;
+  font-size: 12px;
+  line-height: 1;
+  color: var(--loreal-grey-600);
+  opacity: 0.6;
+}
+
+/* Place timestamp right/left aligned to match bubble side */
+.msg.user[data-time]::after {
+  text-align: right;
+}
+.msg.ai[data-time]::after {
+  text-align: left;
+  margin-left: 48px; /* align under text after avatar space */
+}
+
+/* Dark mode timestamp color */
+body.dark-mode .msg[data-time]::after {
+  color: var(--loreal-grey-100);
+}

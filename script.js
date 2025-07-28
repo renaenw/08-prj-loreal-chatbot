@@ -125,9 +125,20 @@ function appendMessage(role, text) {
   const el = document.createElement("div");
   el.className = `msg ${role === "user" ? "user" : "ai"}`;
   el.textContent = text;
+
+  // Add timestamp attribute safely
+  try {
+    const now = new Date();
+    const time = now.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+    el.setAttribute("data-time", time);
+  } catch (e) {
+    console.warn("Timestamp formatting failed:", e);
+  }
+
   chatWindow.appendChild(el);
   chatWindow.scrollTop = chatWindow.scrollHeight;
 }
+
 
 function showTypingBubble() {
   if (document.getElementById("typingBubble")) return;
